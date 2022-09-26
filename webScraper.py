@@ -1,4 +1,4 @@
-from urllib.request import Request, urlopen
+from csv import  writer
 from bs4 import BeautifulSoup
 import requests
 
@@ -9,34 +9,37 @@ hdrs ={
 }
 
 page = 1
-while page != 349:
-      url = f"https://www.mudah.my/penang/houses-for-sale?o={page}"
-      page = page + 1
-      webpage = requests.get(url, headers=hdrs).text
 
-      soup = BeautifulSoup(webpage, 'lxml')
+with open('housing.csv','w',encoding='utf8',newline='') as file:
+    thewriter = writer(file)
+    headerCSV = ['Title', 'Price', 'Location', 'BuildArea', 'NoOfBedrooms', 'NoOfBathrooms']
+    thewriter.writerow(headerCSV)
+    while page != 349:
+          url = f"https://www.mudah.my/penang/houses-for-sale?o={page}"
+          page = page + 1
+          webpage = requests.get(url, headers=hdrs).text
 
-      for housing in soup.find_all('div', class_='sc-fHSTwm kPxBwp'):
-          # title
-          title = housing.find('a', class_='sc-cgHJcJ EaieH').text
+          soup = BeautifulSoup(webpage, 'lxml')
 
-          # price
-          price = housing.find('div', class_='sc-hARARD cOEWki').text
+          for housing in soup.find_all('div', class_='sc-fHSTwm kPxBwp'):
+              # title
+              title = housing.find('a', class_='sc-cgHJcJ EaieH').text
 
-          # location
-          location = housing.find('span', class_='sc-fKGOjr kokWXc').text
+              # price
+              price = housing.find('div', class_='sc-hARARD cOEWki').text
 
-          # BuildArea
-          buildArea = housing.find('div', class_='sc-jQMNup hTRZZu', title='Size').div.text
+              # location
+              location = housing.find('span', class_='sc-fKGOjr kokWXc').text
 
-          # No Of Bedrooms
-          noOfBedrooms = housing.find('div', class_='sc-jQMNup hTRZZu', title='Bedrooms').div.text
+              # BuildArea
+              buildArea = housing.find('div', class_='sc-jQMNup hTRZZu', title='Size').div.text
 
-          # No of Bathrooms
-          noOfBathrooms = housing.find('div', class_='sc-jQMNup hTRZZu', title='Bathrooms').div.text
+              # No Of Bedrooms
+              noOfBedrooms = housing.find('div', class_='sc-jQMNup hTRZZu', title='Bedrooms').div.text
 
-          info = [title, price, location, buildArea, noOfBedrooms, noOfBathrooms]
-          print(str(info))
-
-
-
+              # No of Bathrooms
+              noOfBathrooms = housing.find('div', class_='sc-jQMNup hTRZZu', title='Bathrooms').div.text
+                
+              print(f'Page Progress: {page}')
+              info = [title, price, location, buildArea, noOfBedrooms, noOfBathrooms]
+              thewriter.writerow(info)
