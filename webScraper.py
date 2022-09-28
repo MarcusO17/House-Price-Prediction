@@ -14,13 +14,13 @@ with open('housing.csv','w',encoding='utf8',newline='') as file:
     thewriter = writer(file)
     headerCSV = ['Title', 'Price', 'Location', 'BuildArea', 'NoOfBedrooms', 'NoOfBathrooms']
     thewriter.writerow(headerCSV)
-    while page != 349:
-          url = f"https://www.mudah.my/penang/houses-for-sale?o={page}"
+    while page !=  548:
+          url = f"https://www.mudah.my/penang/apartment-condominium-for-sale?o={page}"
           page = page + 1
           webpage = requests.get(url, headers=hdrs).text
 
           soup = BeautifulSoup(webpage, 'lxml')
-
+          print(f'Page Progress: {page}')
           for housing in soup.find_all('div', class_='sc-fHSTwm kPxBwp'):
               # title
               title = housing.find('a', class_='sc-cgHJcJ EaieH').text
@@ -40,6 +40,6 @@ with open('housing.csv','w',encoding='utf8',newline='') as file:
               # No of Bathrooms
               noOfBathrooms = housing.find('div', class_='sc-jQMNup hTRZZu', title='Bathrooms').div.text
                 
-              print(f'Page Progress: {page}')
+
               info = [title, price, location, buildArea, noOfBedrooms, noOfBathrooms]
               thewriter.writerow(info)
